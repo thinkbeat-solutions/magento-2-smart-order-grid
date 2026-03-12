@@ -284,11 +284,17 @@ If you find this module helpful:
 
 Here is the Order Items column in action:
 
-![Screenshot 1](Screenshot/1.png)
-![Screenshot 2](Screenshot/2.jpg)
-![Screenshot 3](Screenshot/3.jpg)
-![Screenshot 4](Screenshot/4.png)
+<div align="center">
+  <img src="Screenshot/1.png" alt="Screenshot 1" width="48%">
+  <img src="Screenshot/2.jpg" alt="Screenshot 2" width="48%">
+</div>
+<div align="center">
+  <img src="Screenshot/3.jpg" alt="Screenshot 3" width="48%">
+  <img src="Screenshot/4.png" alt="Screenshot 4" width="48%">
+</div>
 
 ---
 
-**Made with ❤️ for the Magento Community**
+<div align="center">
+  <strong>Made with ❤️ for the Magento Community</strong>
+</div>
