@@ -1,0 +1,132 @@
+<?php
+/**
+ * Copyright © Thinkbeat. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Thinkbeat\SmartOrderGrid\Model\ResourceModel\Order\Grid;
+
+use Magento\Framework\Data\Collection\Db\FetchStrategyInterface as FetchStrategy;
+use Magento\Framework\Data\Collection\EntityFactoryInterface as EntityFactory;
+use Magento\Framework\Event\ManagerInterface as EventManager;
+use Psr\Log\LoggerInterface as Logger;
+
+class Collection extends \Magento\Sales\Model\ResourceModel\Order\Grid\Collection
+{
+    /**
+     * @var bool
+     */
+    private $orderItemsJoined = false;
+
+    public function __construct(
+        EntityFactory $entityFactory,
+        Logger $logger,
+        FetchStrategy $fetchStrategy,
+        EventManager $eventManager,
+        $mainTable = 'sales_order_grid',
+        $resourceModel = \Magento\Sales\Model\ResourceModel\Order::class
+    ) {
+        parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $mainTable, $resourceModel);
+    }
+
+    /**
+     * Join order items data efficiently
+     */
+    private function joinOrderItems()
+    {
+        if ($this->orderItemsJoined) {
+            return;
+        }
+
+        $fromPart = $this->getSelect()->getPart(\Magento\Framework\DB\Select::FROM);
+        
+        if (!isset($fromPart['order_items'])) {
+            $orderItemTable = $this->getTable('sales_order_item');
+            
+            $this->getSelect()->joinLeft(
+                ['order_items' => $orderItemTable],
+                'main_table.entity_id = order_items.order_id AND order_items.parent_item_id IS NULL',
+                [
+                    'order_items_data' => new \Zend_Db_Expr(
+                        "GROUP_CONCAT(
+                            CONCAT_WS('|',
+                                order_items.name,
+                                order_items.sku,
+                                CAST(order_items.qty_ordered AS CHAR),
+                                COALESCE(order_items.product_id, '0')
+                            )
+                            SEPARATOR '||'
+                        )"
+                    ),
+                    'order_items_count' => new \Zend_Db_Expr('COUNT(order_items.item_id)'),
+                    'order_items_sku' => new \Zend_Db_Expr(
+                        "GROUP_CONCAT(DISTINCT order_items.sku SEPARATOR ', ')"
+                    ),
+                    'order_items_name' => new \Zend_Db_Expr(
+                        "GROUP_CONCAT(DISTINCT order_items.name SEPARATOR ', ')"
+                    )
+                ]
+            )->group('main_table.entity_id');
+            
+            $this->orderItemsJoined = true;
+        }
+    }
+
+    /**
+     * Add field to filter
+     *
+     * @param string|array $field
+     * @param string|int|array|null $condition
+     * @return $this
+     */
+    public function addFieldToFilter($field, $condition = null)
+    {
+        // Ensure join is added first
+        if (!$this->orderItemsJoined) {
+            $this->joinOrderItems();
+        }
+
+        // Handle custom filter fields for product name and SKU
+        if ($field === 'order_items_name') {
+            // Extract the search value
+            $value = is_array($condition) && isset($condition['like']) ? 
+                     str_replace('%', '', $condition['like']) : $condition;
+            
+            if (!empty($value)) {
+                // Use HAVING clause since we're filtering on aggregated data
+                $this->getSelect()->having(
+                    'order_items_name LIKE ?',
+                    '%' . $value . '%'
+                );
+            }
+            return $this;
+        }
+        
+        if ($field === 'order_items_sku') {
+            // Extract the search value
+            $value = is_array($condition) && isset($condition['like']) ? 
+                     str_replace('%', '', $condition['like']) : $condition;
+            
+            if (!empty($value)) {
+                // Use HAVING clause since we're filtering on aggregated data
+                $this->getSelect()->having(
+                    'order_items_sku LIKE ?',
+                    '%' . $value . '%'
+                );
+            }
+            return $this;
+        }
+
+        return parent::addFieldToFilter($field, $condition);
+    }
+
+    /**
+     * Hook to ensure order items are joined before loading
+     */
+    protected function _beforeLoad()
+    {
+        if (!$this->orderItemsJoined) {
+            $this->joinOrderItems();
+        }
+        return parent::_beforeLoad();
+    }
+}

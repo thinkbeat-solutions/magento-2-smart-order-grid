@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Thinkbeat. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <listingToolbar name="listing_top">
+        <filters name="listing_filters">
+            <filterInput name="order_items_name" provider="${ $.parentName }">
+                <settings>
+                    <label translate="true">Product Name</label>
+                    <dataScope>order_items_name</dataScope>
+                    <visible>true</visible>
+                </settings>
+            </filterInput>
+            <filterInput name="order_items_sku" provider="${ $.parentName }">
+                <settings>
+                    <label translate="true">Product SKU</label>
+                    <dataScope>order_items_sku</dataScope>
+                    <visible>true</visible>
+                </settings>
+            </filterInput>
+        </filters>
+    </listingToolbar>
+
+    <columns name="sales_order_columns">
+        <!-- Item Count Column -->
+        <column name="order_items_count" sortOrder="114">
+            <settings>
+                <label translate="true">Items</label>
+                <sortable>true</sortable>
+                <visible>true</visible>
+            </settings>
+        </column>
+
+        <!-- Order Items Detail Column -->
+        <column name="order_items" class="Thinkbeat\SmartOrderGrid\Ui\Component\Listing\Column\OrderItems" sortOrder="115">
+            <settings>
+                <label translate="true">Order Items</label>
+                <sortable>false</sortable>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <resizeEnabled>true</resizeEnabled>
+                <resizeDefaultWidth>400</resizeDefaultWidth>
+                <controlVisibility>true</controlVisibility>
+                <visible>true</visible>
+                <headerTmpl>ui/grid/columns/text</headerTmpl>
+                <fieldClass>
+                    <class name="order-items-column">true</class>
+                </fieldClass>
+            </settings>
+        </column>
+    </columns>
+</listing>

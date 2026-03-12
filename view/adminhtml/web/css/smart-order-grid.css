@@ -1,0 +1,35 @@
+/**
+ * Copyright © Thinkbeat. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+
+/* Force width for Order Items column */
+[data-index="order_items"] {
+    min-width: 400px !important;
+    width: 400px !important;
+}
+
+[data-index="order_items"] .data-grid-cell-content {
+    min-width: 400px !important;
+}
+
+/* Ensure column header also has width */
+.data-grid-th[data-index="order_items"] {
+    min-width: 400px !important;
+    width: 400px !important;
+}
+
+.order-items-column {
+    min-width: 400px !important;
+    max-width: 600px !important;
+}
+.admin__data-grid-header .order-items-column {
+    width: 400px !important;
+    min-width: 400px;
+}
+
+
+.admin__data-grid-wrap .order-items-column {
+    width: 400px !important;
+    min-width: 400px;
+}

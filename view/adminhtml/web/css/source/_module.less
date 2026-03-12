@@ -1,0 +1,23 @@
+/**
+ * Copyright © Thinkbeat. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+
+// Force width for Order Items column
+.admin__data-grid-wrap .admin__data-grid-outer-wrap .data-grid {
+    .data-grid-cell-content[data-bind*="order_items"] {
+        min-width: 400px;
+        max-width: 600px;
+    }
+    
+    [data-index="order_items"] {
+        min-width: 400px !important;
+        max-width: 600px !important;
+        width: 400px !important;
+    }
+}
+
+.order-items-column {
+    min-width: 400px;
+    max-width: 600px;
+}
