@@ -282,7 +282,12 @@ If you find this module helpful:
 
 ## 📸 Screenshots
 
-_Coming Soon: Screenshots of the Order Items column in action_
+Here is the Order Items column in action:
+
+![Screenshot 1](Screenshot/1.png)
+![Screenshot 2](Screenshot/2.jpg)
+![Screenshot 3](Screenshot/3.jpg)
+![Screenshot 4](Screenshot/4.png)
 
 ---
 
